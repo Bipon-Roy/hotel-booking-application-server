@@ -75,11 +75,27 @@ async function run() {
 
         //Hotels related api
         app.get("/rooms", async (req, res) => {
-            const cursor = roomCollection.find();
+            let queryObj = {};
+            let sortObj = {};
+            const sortField = req.query.sortField;
+            const sortOrder = req.query.sortOrder;
+
+            if (sortField && sortOrder) {
+                sortObj[sortField] = sortOrder;
+            }
+            console.log(sortField);
+            const cursor = roomCollection.find(queryObj).sort(sortObj);
             const result = await cursor.toArray();
             res.send(result);
         });
-        app.get("/rooms/:id", async (req, res) => {
+
+        app.get("/roomDetails/:id", async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) };
+            const result = await roomCollection.findOne(query);
+            res.send(result);
+        });
+        app.get("/bookings/:id", async (req, res) => {
             const id = req.params.id;
             const query = { _id: new ObjectId(id) };
 
