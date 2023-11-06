@@ -96,7 +96,7 @@ async function run() {
             const result = await roomCollection.findOne(query);
             res.send(result);
         });
-        app.get("/bookings/:id", async (req, res) => {
+        app.get("/rooms/:id", async (req, res) => {
             const id = req.params.id;
             const query = { _id: new ObjectId(id) };
 
@@ -110,6 +110,20 @@ async function run() {
                 },
             };
             const result = await roomCollection.findOne(query, options);
+            res.send(result);
+        });
+
+        app.get("/bookings", logger, verifyToken, async (req, res) => {
+            console.log(req.query.email);
+            console.log("Cookies:", req.user);
+            if (req.user.email !== req.query.email) {
+                return res.status(403).send({ message: "forbidden access" });
+            }
+            let query = {};
+            if (req.query?.email) {
+                query = { email: req.query.email };
+            }
+            const result = await bookingCollection.find(query).toArray();
             res.send(result);
         });
 
