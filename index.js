@@ -54,6 +54,7 @@ async function run() {
         // await client.connect();
 
         const roomCollection = client.db("hotelDb").collection("rooms");
+        const bookingCollection = client.db("hotelDb").collection("bookings");
         //auth related api
         app.post("/jwt", logger, async (req, res) => {
             const user = req.body;
@@ -100,10 +101,22 @@ async function run() {
             const query = { _id: new ObjectId(id) };
 
             const options = {
-                projection: { _id: 1, title: 1, price_per_night: 1, room_thumbnail: 1 },
+                projection: {
+                    _id: 1,
+                    title: 1,
+                    price_per_night: 1,
+                    room_thumbnail: 1,
+                    room_description: 1,
+                },
             };
-
             const result = await roomCollection.findOne(query, options);
+            res.send(result);
+        });
+
+        app.post("/bookings", async (req, res) => {
+            const booking = req.body;
+            console.log(booking);
+            const result = await bookingCollection.insertOne(booking);
             res.send(result);
         });
         // Send a ping to confirm a successful connection
