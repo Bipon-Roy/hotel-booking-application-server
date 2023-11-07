@@ -113,6 +113,8 @@ async function run() {
             res.send(result);
         });
 
+        //bookings
+
         app.get("/bookings", logger, verifyToken, async (req, res) => {
             console.log(req.query.email);
             console.log("Cookies:", req.user);
@@ -131,6 +133,13 @@ async function run() {
             const booking = req.body;
             console.log(booking);
             const result = await bookingCollection.insertOne(booking);
+            res.send(result);
+        });
+
+        app.delete("/bookings/:id", logger, verifyToken, async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) };
+            const result = await bookingCollection.deleteOne(query);
             res.send(result);
         });
         // Send a ping to confirm a successful connection
