@@ -129,6 +129,20 @@ async function run() {
             res.send(result);
         });
 
+        app.get("/bookings/:id", logger, verifyToken, async (req, res) => {
+            const id = req.params.id;
+            const userEmail = req.user.email;
+            const query = { _id: new ObjectId(id) };
+            const booking = await bookingCollection.findOne(query);
+            console.log(userEmail);
+            if (!booking) {
+                return res.status(404).send({ message: "Booking not found" });
+            }
+            if (booking.email !== userEmail) {
+                return res.status(403).send({ message: "Forbidden access" });
+            }
+            res.send(booking);
+        });
         app.post("/bookings", async (req, res) => {
             const booking = req.body;
             console.log(booking);
