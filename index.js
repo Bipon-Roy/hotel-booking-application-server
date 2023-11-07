@@ -53,7 +53,7 @@ async function run() {
         // Connect the client to the server	(optional starting in v4.7)
         // await client.connect();
 
-        const roomCollection = client.db("hotelDb").collection("rooms");
+        const roomCollection = client.db("hotelDb").collection("hotelRooms");
         const bookingCollection = client.db("hotelDb").collection("bookings");
         //auth related api
         app.post("/jwt", logger, async (req, res) => {
@@ -98,6 +98,7 @@ async function run() {
         });
         app.get("/rooms/:id", async (req, res) => {
             const id = req.params.id;
+            console.log(id);
             const query = { _id: new ObjectId(id) };
 
             const options = {
@@ -107,14 +108,29 @@ async function run() {
                     price_per_night: 1,
                     room_thumbnail: 1,
                     room_description: 1,
+                    seats: 1,
                 },
             };
             const result = await roomCollection.findOne(query, options);
             res.send(result);
         });
+        app.patch("/rooms/:id", logger, verifyToken, async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: new ObjectId(id) };
+            const options = { upsert: true };
+            const fetchRoom = req.body;
+            console.log(fetchRoom.seats);
+            const updatedRoom = {
+                $set: {
+                    seats: fetchRoom.seats,
+                },
+            };
 
+            const result = await roomCollection.updateOne(filter, updatedRoom, options);
+            console.log(result);
+            res.send(result);
+        });
         //bookings
-
         app.get("/bookings", logger, verifyToken, async (req, res) => {
             console.log(req.query.email);
             console.log("Cookies:", req.user);
@@ -143,20 +159,19 @@ async function run() {
             }
             res.send(booking);
         });
-        app.post("/bookings", async (req, res) => {
+        app.post("/bookings", logger, verifyToken, async (req, res) => {
             const booking = req.body;
-            console.log(booking);
             const result = await bookingCollection.insertOne(booking);
             res.send(result);
         });
 
-        app.patch("/bookings/:id", async (req, res) => {
+        app.put("/bookings/:id", logger, verifyToken, async (req, res) => {
             const id = req.params.id;
             console.log(id);
             const filter = { _id: new ObjectId(id) };
             const options = { upsert: true };
             const fetchRoom = req.body;
-            const updatedProduct = {
+            const updatedBooking = {
                 $set: {
                     customerName: fetchRoom.name,
                     checkIn: fetchRoom.checkIn,
@@ -164,7 +179,7 @@ async function run() {
                 },
             };
 
-            const result = await bookingCollection.updateOne(filter, updatedProduct, options);
+            const result = await bookingCollection.updateOne(filter, updatedBooking, options);
             console.log(result);
             res.send(result);
         });
