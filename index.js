@@ -150,12 +150,32 @@ async function run() {
             res.send(result);
         });
 
+        app.patch("/bookings/:id", async (req, res) => {
+            const id = req.params.id;
+            console.log(id);
+            const filter = { _id: new ObjectId(id) };
+            const options = { upsert: true };
+            const fetchRoom = req.body;
+            const updatedProduct = {
+                $set: {
+                    customerName: fetchRoom.name,
+                    checkIn: fetchRoom.checkIn,
+                    checkOut: fetchRoom.checkOut,
+                },
+            };
+
+            const result = await bookingCollection.updateOne(filter, updatedProduct, options);
+            console.log(result);
+            res.send(result);
+        });
+
         app.delete("/bookings/:id", logger, verifyToken, async (req, res) => {
             const id = req.params.id;
             const query = { _id: new ObjectId(id) };
             const result = await bookingCollection.deleteOne(query);
             res.send(result);
         });
+
         // Send a ping to confirm a successful connection
         await client.db("admin").command({ ping: 1 });
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
