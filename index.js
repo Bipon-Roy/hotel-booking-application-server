@@ -82,15 +82,28 @@ async function run() {
 
         //Hotels related api
         app.get("/rooms", async (req, res) => {
-            let queryObj = {};
-            let sortObj = {};
-            const sortField = req.query.sortField;
-            const sortOrder = req.query.sortOrder;
+            const queryObj = {};
 
-            if (sortField && sortOrder) {
-                sortObj[sortField] = sortOrder;
+            const minPrice = parseFloat(req.query.minPrice);
+            const maxPrice = parseFloat(req.query.maxPrice);
+            const sortOrder = req.query.sortOrder;
+            const sortObj = {};
+
+            if (!isNaN(minPrice)) {
+                queryObj.price_per_night = { $gte: minPrice };
             }
-            console.log(sortField);
+            if (!isNaN(maxPrice)) {
+                if (queryObj.price_per_night) {
+                    queryObj.price_per_night.$lte = maxPrice;
+                } else {
+                    queryObj.price_per_night = { $lte: maxPrice };
+                }
+            }
+            console.log(queryObj);
+            if (sortOrder) {
+                sortObj.price_per_night = sortOrder;
+            }
+
             const cursor = roomCollection.find(queryObj).sort(sortObj);
             const result = await cursor.toArray();
             res.send(result);
