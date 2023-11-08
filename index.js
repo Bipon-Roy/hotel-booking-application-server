@@ -55,6 +55,8 @@ async function run() {
 
         const roomCollection = client.db("hotelDb").collection("hotelRooms");
         const bookingCollection = client.db("hotelDb").collection("bookings");
+        const reviewCollection = client.db("hotelDb").collection("reviews");
+
         //auth related api
         app.post("/jwt", logger, async (req, res) => {
             const user = req.body;
@@ -191,6 +193,17 @@ async function run() {
             res.send(result);
         });
 
+        //review
+        app.post("/reviews", logger, verifyToken, async (req, res) => {
+            const booking = req.body;
+            const result = await reviewCollection.insertOne(booking);
+            res.send(result);
+        });
+        app.get("/reviews", async (req, res) => {
+            const cursor = reviewCollection.find();
+            const result = await cursor.toArray();
+            res.send(result);
+        });
         // Send a ping to confirm a successful connection
         await client.db("admin").command({ ping: 1 });
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
