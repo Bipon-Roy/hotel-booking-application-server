@@ -10,7 +10,11 @@ const cookieParser = require("cookie-parser");
 // middleware
 app.use(
     cors({
-        origin: ["http://localhost:5173"],
+        origin: [
+            "http://localhost:5173",
+            "https://hotel-booking-60b59.web.app",
+            "https://hotel-booking-60b59.firebaseapp.com",
+        ],
         credentials: true,
     })
 );
