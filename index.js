@@ -199,8 +199,11 @@ async function run() {
             const result = await reviewCollection.insertOne(booking);
             res.send(result);
         });
-        app.get("/reviews", async (req, res) => {
-            const cursor = reviewCollection.find();
+
+        app.get("/reviews/:id", async (req, res) => {
+            const roomId = req.params.id;
+            const query = { room_id: roomId };
+            const cursor = reviewCollection.find(query);
             const result = await cursor.toArray();
             res.send(result);
         });
