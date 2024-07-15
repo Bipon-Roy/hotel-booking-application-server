@@ -1,9 +1,9 @@
 const mongoose = require("mongoose");
 
 const ReviewSchema = new mongoose.Schema({
-    roomId: { type: mongoose.Schema.Types.ObjectId, ref: "Room" },
+    room_id: { type: String, required: true },
     review: String,
     rating: Number,
 });
 
-module.exports = mongoose.model("Review", ReviewSchema);
+module.exports = mongoose.model("Reviews", ReviewSchema);
