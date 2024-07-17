@@ -6,7 +6,7 @@ const {
     updateBooking,
     deleteBooking,
 } = require("../controllers/bookingController");
-const verifyToken = require("../middleware/authMiddleware");
+const verifyToken = require("../middleware/authMiddleWare");
 const logger = require("../middleware/logger");
 
 const router = express.Router();

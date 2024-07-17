@@ -1,6 +1,6 @@
 const express = require("express");
 const { createReview, getReviewsByRoomId } = require("../controllers/reviewController");
-const verifyToken = require("../middleware/authMiddleware");
+const verifyToken = require("../middleware/authMiddleWare");
 const logger = require("../middleware/logger");
 
 const router = express.Router();
