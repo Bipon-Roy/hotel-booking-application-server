@@ -1,4 +1,4 @@
-const Booking = require("../models/booking");
+const Booking = require("../models/Booking");
 
 const getBookings = async (req, res) => {
     if (req.user.email !== req.query.email) {
